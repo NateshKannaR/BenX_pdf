@@ -12,7 +12,7 @@ BenX_pdf boots a real RISC-V Linux guest inside a standalone PDF. The built-in C
 
 1. Download an edition and open it directly in desktop Chromium’s built-in PDF viewer.
 2. Wait for **RUNNING** and the `benx:~#` prompt. Keep the tab in the foreground during boot.
-3. Type `benx-info` into **COMMAND** and select **Run**. The on-page keyboard sends individual terminal keys for vi, shell history, and Ctrl+C.
+3. Type `benx-info` into **COMMAND** and select **Run**. The on-page keyboard sends individual terminal keys for vi and shell history. Select **Ctrl**, then **C**, to interrupt a running guest process.
 4. Run `benx-tutorial` to practice with files, scripts, and diagnostics. Use **Restart** for a fresh running VM or **Reset** to return to the idle screen.
 
 Closing, restarting, or resetting discards guest writes. Boot restores the original embedded root disk. Saving a copy through the viewer does not save the guest disk. Viewer JavaScript must be enabled.
@@ -61,7 +61,7 @@ The comparison used the original LinuxPDF RV32 code and Chromium 156 on one AMD 
 | Median displayed throughput during boot | 1,051 kIPS | 1,650 kIPS |
 | Median virtual Enter to visible change | 459 ms | 486 ms |
 
-The throughput counters use different accounting. Rendering and input latency were variable, and this run does not show a latency improvement. [Methods and raw samples](benchmarks/README.md)
+The throughput counters use different accounting. The input and display samples showed no improvement. The report records the exact benchmark build hashes. [Methods and raw samples](benchmarks/README.md)
 
 ## Limits and licensing
 
