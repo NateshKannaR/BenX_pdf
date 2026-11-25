@@ -15,7 +15,7 @@ const pdfPath = path.resolve(process.argv[3] || `out/BenX_${edition}.pdf`);
 const report = path.resolve(process.env.BENX_TEST_RESULTS || 'test-results');
 const viewport = { width: 1640, height: 1150 };
 const regions = {
-  console: { x: 375, y: 217, width: 880, height: 460 },
+  console: { x: 375, y: 205, width: 880, height: 477 },
   state: { x: 1295, y: 245, width: 248, height: 36 },
   ram: { x: 1295, y: 377, width: 248, height: 38 },
   throughput: { x: 1295, y: 307, width: 248, height: 37 },
