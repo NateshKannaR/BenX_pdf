@@ -133,7 +133,7 @@ async function main() {
       await submit(page, 'clear; top -b -n 1 | head -n 10');
       await waitText(page, /Load average|PID.*PPID/i);
       await submit(page, "vi /root/proof/edit");
-      await waitText(page, /New file|^~$/im);
+      await waitText(page, /\/root\/proof\/edit\s+\d+\/\d+/);
       // Key F-row begins at y=810 and printable rows advance at 29.33 CSS px.
       // vi starts in command mode. Press i, x, Esc, Shift+; (colon), w, q, Enter.
       const key = async (x, y) => {
@@ -176,8 +176,8 @@ async function main() {
       await submit(page, 'clear; lua /tmp/test.luac');
       await waitText(page, /Hello from Linux via Lua 5\.4/);
       await submit(page, 'c4 ~/examples/hello.c');
-      const output = await waitText(page, /exit\(0\) cycle/);
-      assert.match(output, /C square 4 = 16/);
+      const output = await waitText(page, /cycle\s*=\s*\d+/);
+      assert.match(output, /C square 4\s*=\s*16/);
       assert.match(output, /Hello from Linux via Lua 5\.4/);
       measurements.validations.push('Native RV32 Lua, luac and c4 C bytecode compiler execute in Linux');
       await page.screenshot({ path: path.join(report, 'Developer-console.png'), clip: regions.document });

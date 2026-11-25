@@ -19,6 +19,6 @@ Reset cancels the timer, releases the console and block devices and VM RAM, free
 
 ## Upstream differences
 
-The imported commit includes the original LinuxPDF implementation and the complete TinyEMU tree. The BenX path keeps the RISC-V core and VirtIO model and uses only a serial console and a RAM-backed block device. It replaces the original framebuffer-to-ASCII renderer, virtual input device, asynchronous 9P asset layer, and privileged disk extraction. The original framebuffer remains available in the upstream baseline build for comparison.
+The imported commit includes the original LinuxPDF implementation and the complete TinyEMU tree. Comparing it with Bellard’s TinyEMU 2019-12-21 release shows that LinuxPDF changed `jsemu.c` and `js/lib.js` and added `Makefile.pdfjs`. The original CPU and device source matches that release. The BenX path keeps the RISC-V core and VirtIO model and uses only a serial console and a RAM-backed block device. It replaces the original framebuffer-to-ASCII renderer, virtual input device, asynchronous 9P asset layer, and privileged disk extraction. The original framebuffer remains available in the upstream baseline build for comparison.
 
 The shipped kernels retain the upstream example configuration and Linux 4.15 lineage. Boot tuning focused on guest RAM size, device selection, fewer userspace services, and console verbosity. The kernel itself was not rebuilt. [Upstream and kernel source details](../CREDITS.md)

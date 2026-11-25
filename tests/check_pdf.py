@@ -3,10 +3,12 @@
 import json
 import sys
 import zlib
+from pathlib import Path
 
 from pdfrw import PdfName, PdfReader
 
-pdf, edition, bits = sys.argv[1:]
+pdf, edition, bits, *script_output = sys.argv[1:]
+assert len(script_output) <= 1, "expected at most one script output path"
 document = PdfReader(pdf)
 assert len(document.pages) == 1, "expected a single workstation page"
 page = document.pages[0]
@@ -25,4 +27,6 @@ assert all(assets[name] for name in ("bios", "kernel", "root"))
 assert '"use asm"' in script and "_benx_start" in script
 assert 'new XMLHttpRequest' not in script and "fetch(" not in script
 assert document.Info.Title.to_unicode() == f"BenX_pdf {edition}"
+if script_output:
+    Path(script_output[0]).write_text(script, encoding="ascii")
 print(f"Validated PDF structure and bundled assets for {edition}")

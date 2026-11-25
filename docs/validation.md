@@ -16,8 +16,8 @@ The GitHub downloads were fetched back and matched the local PDFs byte for byte.
 
 - LinuxPDF's published PDF and a rebuild using the pinned upstream source reached the actual BusyBox prompt in Chromium. See the [benchmark capture](../benchmarks/chromium-156.json).
 - BenX Lite's final downloadable bytes reached the BusyBox prompt in isolated Chromium. Earlier interactive Chromium checks ran `uname -a`, `mkdir`, `touch`, `echo`, `cat`, `ls`, `sh`, `free`, `ps`, and batch `top`. The shell returned a Linux 4.15 kernel string, real process and memory data, and a token written to a guest file while the browser was offline.
-- A host-side diagnostic extracted the exact final Lite PDF's JavaScript, ran the asm.js VM with test-only form and timer adapters, and checked guest writes, restart into a pristine disk, and reset releasing the timer and disk.
-- Developer's Linux shell compiled and executed Lua bytecode and ran the c4 example in the diagnostic harness. Chromium also visibly executed the Lua example.
+- A host-side diagnostic extracted the exact final Lite PDF's JavaScript, ran the asm.js VM with test-only form and timer adapters, and checked guest writes, edits in vi through virtual key handlers, restart into a pristine disk, and reset releasing the timer and disk. The same diagnostic is in `tests/session.cjs`.
+- Developer's Linux shell compiled and executed Lua bytecode and ran the c4 example in Chromium and in the diagnostic harness. Chromium displayed `C square 4 = 16` followed by c4's instruction count and the shell prompt.
 - The Advanced diagnostic ran `uname -a` and the monitoring script on an RV64 Linux 4.15 guest. It reported `riscv64`, `rv64acdfimsu`, `sv48`, guest memory, and actual mount and disk data.
 
 Concurrent Chromium runs exceeded the timing budget on this host. Use one browser at a time when reproducing the browser suite. These tests use viewer screenshots and may need crop adjustments on variations of Chromium's PDF toolbar.

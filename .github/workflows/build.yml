@@ -22,6 +22,11 @@ jobs:
           done
       - name: Test terminal
         run: make test
+      - name: Boot the bundled VM and test guest writes
+        run: |
+          PYTHONPATH=.cache/downloads/pdfrw-0.4-py2.py3-none-any.whl \
+            python3 tests/check_pdf.py out/BenX_Lite.pdf Lite 32 build/lite-test.js
+          node tests/session.cjs build/lite-test.js
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: BenX-pdf-editions
