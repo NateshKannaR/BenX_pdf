@@ -1,0 +1,40 @@
+{
+  "edition": "Developer",
+  "bytes": 4221552,
+  "browser": "156.0.8078.79",
+  "validations": [
+    "Executable PDF opened in Chromium and booted to a BusyBox prompt offline",
+    "Guest memory telemetry rendered",
+    "Native RV32 Lua, luac and c4 C bytecode compiler execute in Linux",
+    "Tab closed with no external requests or viewer error dialogs"
+  ],
+  "shellMs": 32454,
+  "bootRateSamplesKips": [
+    2700,
+    1730,
+    2025,
+    1820,
+    1974,
+    1908,
+    1694,
+    1799,
+    1681,
+    1751,
+    1754,
+    1731,
+    1836,
+    1871,
+    1749,
+    1815,
+    1831,
+    1767,
+    1736,
+    1517,
+    1665,
+    1610,
+    1444,
+    1244,
+    1136,
+    1495
+  ]
+}
