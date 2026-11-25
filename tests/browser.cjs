@@ -101,7 +101,8 @@ async function main() {
       if (match) rates.push(Number(match[1]));
       await page.waitForTimeout(750);
     }
-    await waitText(page, /benx:~#/, regions.console, 10000);
+    const consoleText = await waitText(page, /benx:~#/, regions.console, 10000);
+    assert.doesNotMatch(consoleText, /Download the original PDF/i);
     measurements.shellMs = Math.round(performance.now() - opened);
     measurements.bootRateSamplesKips = rates;
     measurements.validations.push('Executable PDF opened in Chromium and booted to a BusyBox prompt offline');

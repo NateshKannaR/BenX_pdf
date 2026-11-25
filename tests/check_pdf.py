@@ -14,6 +14,9 @@ assert len(document.pages) == 1, "expected a single workstation page"
 page = document.pages[0]
 fields = {field.T.to_unicode(): field for field in document.Root.AcroForm.Fields}
 assert len([name for name in fields if name.startswith("row_")]) == 24
+assert fields["state"].V.to_unicode() == "WAITING FOR JS"
+assert "desktop Chrome or Chromium" in fields["row_1"].V.to_unicode()
+assert "For the live terminal, download this PDF" in page.Contents.stream
 assert len([name for name in fields if name.startswith("key_")]) >= 65
 assert fields["command"].FT == PdfName.Tx and int(fields["command"].Ff) == 0
 for name in ("boot", "restart", "reset", "run"):

@@ -4,13 +4,13 @@
 
 BenX_pdf boots a real RISC-V Linux guest inside a standalone PDF. The built-in Chromium viewer executes TinyEMU compiled to asm.js. Linux runs a BusyBox shell and writes to a guest disk backed by memory. The PDF contains the emulator, bootloader, kernel, and filesystem.
 
-[Download the PDF editions](https://github.com/NateshKannaR/BenX_pdf/tree/artifacts/v1.0.0) · [Build guide](docs/build.md) · [Architecture](docs/architecture.md) · [Benchmark results](benchmarks/README.md) · [Validation](docs/validation.md)
+[Download the PDF editions](https://github.com/NateshKannaR/BenX_pdf/tree/artifacts/v1.0.1) · [Build guide](docs/build.md) · [Architecture](docs/architecture.md) · [Benchmark results](benchmarks/README.md) · [Validation](docs/validation.md)
 
 ![BenX Lite running in Chromium with Linux console output, guest memory readings, and the virtual keyboard](web/assets/lite-console.png)
 
 ## Run the workstation
 
-1. Download an edition and open it directly in desktop Chromium’s built-in PDF viewer.
+1. Download the original `.pdf` to your computer. In desktop Chrome or Chromium, press **Ctrl+O** (**⌘O** on Mac) and select the downloaded file.
 2. Wait for **RUNNING** and the `benx:~#` prompt. Keep the tab in the foreground during boot.
 3. Type `benx-info` into **COMMAND** and select **Run**. The on-page keyboard sends individual terminal keys for vi and shell history. Select **Ctrl**, then **C**, to interrupt a running guest process.
 4. Run `benx-tutorial` to practice with files, scripts, and diagnostics. Use **Restart** for a fresh running VM or **Reset** to return to the idle screen.
@@ -23,7 +23,9 @@ Closing, restarting, or resetting discards guest writes. Boot restores the origi
 | Developer | RV32 | 64 MiB | Lite tools plus Lua 5.4.8, Lua bytecode compilation, c4 and C/Lua examples |
 | Advanced | RV64 | 96 MiB | 64-bit Buildroot guest, BusyBox and a system-monitoring script |
 
-Chromium 156 was used for automated browser tests. Desktop Chrome and Edge are candidates because they ship Chromium’s native PDF viewer, but this project has no separate test result for either product. Firefox PDF.js, macOS Preview, Acrobat, mobile viewers, and managed browsers that disable PDF JavaScript are unsupported. Workstation output uses a monochrome ASCII VT100 subset.
+**If the console shows the opening instructions or SESSION stays at WAITING FOR JS**, the viewer has yet to start the PDF script. Google Drive, ChatGPT, and GitHub previews show the document as a preview. Download the original file and open it from the desktop browser using step 1. A **BOOTING** status means Linux has started loading.
+
+The automated tests used desktop Chromium 156. Desktop Chrome and Edge ship Chromium’s native PDF viewer and remain separately untested. Firefox PDF.js, macOS Preview, Acrobat, mobile viewers, and managed browsers with PDF JavaScript disabled are unsupported. Workstation output uses a monochrome ASCII VT100 subset.
 
 ## How Linux runs
 

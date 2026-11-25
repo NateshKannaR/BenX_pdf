@@ -139,15 +139,21 @@ class WorkstationPage:
         self.draw.append(rect(37, 639, 5, 5, MINT))
         self.label(51, 638, 10, "LINUX CONSOLE", TEXT, "MonoBold")
         self.label(569, 638, 9, "VIRTIO / HVC0", MUTED, "Mono")
+        startup_rows = (
+            "Download the original PDF to start Linux.",
+            "Open it from desktop Chrome or Chromium with Ctrl+O or Cmd+O.",
+            "Google Drive and ChatGPT previews display the document only.",
+        )
         for row in range(24):
-            self.field(f"row_{row}", 36, 609 - row * 14.7, 651, 14.7, size=12.8,
+            value = startup_rows[row] if row < len(startup_rows) else ""
+            self.field(f"row_{row}", 36, 609 - row * 14.7, 651, 14.7, value, size=12.8,
                        fill=TERMINAL, ink=TEXT)
 
         self.panel(712, 258, 220, 398)
         self.label(728, 634, 11, "SYSTEM", TEXT, "MonoBold")
         self.draw.append(rect(728, 620, 188, 0.6, BORDER))
         self.label(728, 601, 9, "SESSION", MUTED, "Mono")
-        self.field("state", 726, 576, 190, 22, "VIEWER CHECK", 16, ink=MINT, face="MonoBold")
+        self.field("state", 726, 576, 190, 22, "WAITING FOR JS", 16, ink=MINT, face="MonoBold")
         for field, title, y, default in (
             ("rate", "EMULATOR THROUGHPUT", 552, "-"),
             ("memory", "GUEST RAM  /  AVAIL. OF TOTAL", 497, "-"),
@@ -175,9 +181,10 @@ class WorkstationPage:
         self.label(35, 184, 8.5, "VIRTUAL KEYBOARD", MUTED, "MonoBold")
         self.field("mods", 695, 182, 220, 10, "", 8, fill=PANEL, ink=CYAN)
         self.keys()
-        self.field("notice", 24, 18, 530, 20, "Use the built-in desktop Chromium PDF viewer.", 10,
+        self.field("notice", 24, 18, 530, 20, "Waiting for the viewer to start PDF JavaScript.", 10,
                    fill=BG, ink=MINT)
         self.label(644, 24, 9, "OFFLINE  /  SESSION DATA CLEARS ON CLOSE", MUTED, "Mono")
+        self.label(26, 9, 9, "For the live terminal, download this PDF and open it in desktop Chrome or Chromium.", MUTED)
 
         script = compressed_stream(
             'if (typeof benxInitialized === "undefined") {try {\n' + javascript +
