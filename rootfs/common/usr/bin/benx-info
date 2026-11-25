@@ -1,0 +1,10 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+printf 'BenX_pdf %s | %s\n' "$(cat /etc/benx-version)" "$(cat /etc/benx-edition)"
+uname -a
+printf '\nGuest memory (KiB)\n'
+free
+printf '\nUptime and load\n'
+uptime
+printf '\nRoot filesystem\n'
+df -h /

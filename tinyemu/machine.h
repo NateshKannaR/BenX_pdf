@@ -148,6 +148,7 @@ char *get_file_path(const char *base_filename, const char *filename);
 void virt_machine_free_config(VirtMachineParams *p);
 VirtMachine *virt_machine_init(const VirtMachineParams *p);
 void virt_machine_end(VirtMachine *s);
+uint32_t riscv_machine_cycles(VirtMachine *s);
 static inline int virt_machine_get_sleep_duration(VirtMachine *s, int delay)
 {
     return s->vmc->virt_machine_get_sleep_duration(s, delay);

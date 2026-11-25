@@ -1,0 +1,22 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+cat <<'HELP'
+BenX workstation
+  benx-info       Kernel, memory, uptime and filesystem
+  benx-tutorial   Walk through Linux commands in the shell
+  ls /bin         Discover commands installed in this edition
+  busybox         List compiled BusyBox applets
+  vi FILE         Edit a file (Esc, then :wq writes and exits)
+  ps / top        Inspect processes (q exits top interactively)
+  sh FILE         Run a shell script
+  awk             Process text and run small programs
+  ls ~/examples   Find guest examples
+
+Virtual keyboard sends input straight to Linux.
+The command field sends one line with Enter or Run.
+Restart boots a fresh guest. Reset returns to the boot screen.
+HELP
+case "$(cat /etc/benx-edition)" in
+    Developer) printf "\nDeveloper tools: lua, luac, c4. See ~/examples/DEVELOPER.txt.\n" ;;
+    Advanced) printf "\nAdvanced monitoring: sh ~/examples/monitor.sh\n" ;;
+esac

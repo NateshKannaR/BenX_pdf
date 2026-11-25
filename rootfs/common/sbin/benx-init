@@ -1,0 +1,16 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+export HOME=/root TERM=vt100 PS1='benx:\w# '
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+hostname benx
+mkdir -p /dev/pts
+mount -t devpts devpts /dev/pts
+cd "$HOME" || cd /
+/usr/bin/benx-telemetry </dev/null >/dev/hvc0 &
+printf '\nBenX_pdf %s | %s\nThe Document That Boots.\n\n' "$(cat /etc/benx-version)" "$(uname -m)"
+printf 'Type benx-help or benx-tutorial to get started.\n\n'
+while :; do
+    setsid sh -c 'exec </dev/hvc0 >/dev/hvc0 2>&1; stty rows 24 cols 80; exec sh -i'
+done

@@ -9,3 +9,7 @@
 *.wat
 riscvemu32*.js
 riscvemu64*.js
+/.cache/
+/test-results/
+__pycache__/
+/site-build/

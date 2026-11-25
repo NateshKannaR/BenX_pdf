@@ -1,0 +1,20 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+while :; do
+    read -r uptime idle < /proc/uptime
+    total= free= buffers= cached= available=
+    while read -r key value unit; do
+        case "$key" in
+            MemTotal:) total=$value ;;
+            MemFree:) free=$value ;;
+            MemAvailable:) available=$value ;;
+            Buffers:) buffers=$value ;;
+            Cached:) cached=$value; break ;;
+        esac
+    done < /proc/meminfo
+    if [ -n "$total" ] && [ -n "$free" ]; then
+        available=${available:-$((free + buffers + cached))}
+        printf '\033]777;%s;%s;%s\007' "${uptime%.*}" "$total" "$available"
+    fi
+    sleep 8
+done

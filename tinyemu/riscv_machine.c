@@ -59,6 +59,7 @@ typedef struct RISCVMachine {
     VIRTIODevice *keyboard_dev;
     VIRTIODevice *mouse_dev;
 
+    VIRTIODevice *block_devices[MAX_DRIVE_DEVICE];
     int virtio_count;
 } RISCVMachine;
 
@@ -829,7 +830,6 @@ static void riscv_machine_set_defaults(VirtMachineParams *p)
 static VirtMachine *riscv_machine_init(const VirtMachineParams *p)
 {
     RISCVMachine *s;
-    VIRTIODevice *blk_dev;
     int irq_num, i, max_xlen, ram_flags;
     VIRTIOBusDef vbus_s, *vbus = &vbus_s;
 
@@ -908,8 +908,7 @@ static VirtMachine *riscv_machine_init(const VirtMachineParams *p)
     /* virtio block device */
     for(i = 0; i < p->drive_count; i++) {
         vbus->irq = &s->plic_irq[irq_num];
-        blk_dev = virtio_block_init(vbus, p->tab_drive[i].block_dev);
-        (void)blk_dev;
+        s->block_devices[i] = virtio_block_init(vbus, p->tab_drive[i].block_dev);
         vbus->addr += VIRTIO_SIZE;
         irq_num++;
         s->virtio_count++;
@@ -980,10 +979,21 @@ static VirtMachine *riscv_machine_init(const VirtMachineParams *p)
 static void riscv_machine_end(VirtMachine *s1)
 {
     RISCVMachine *s = (RISCVMachine *)s1;
-    /* XXX: stop all */
+    /* BenX uses synchronous MMIO block devices and one console. */
+#ifdef CONFIG_BENX_PDF
+    for (int i = 0; i < MAX_DRIVE_DEVICE; i++)
+        free(s->block_devices[i]);
+    free(s->common.console_dev);
+#endif
     riscv_cpu_end(s->cpu_state);
     phys_mem_map_end(s->mem_map);
     free(s);
+}
+
+uint32_t riscv_machine_cycles(VirtMachine *s1)
+{
+    RISCVMachine *s = (RISCVMachine *)s1;
+    return riscv_cpu_get_cycles(s->cpu_state);
 }
 
 /* in ms */

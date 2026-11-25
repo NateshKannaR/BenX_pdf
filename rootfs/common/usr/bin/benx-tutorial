@@ -1,0 +1,17 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+step() {
+    printf '\n%s\nPress Enter to continue or Ctrl+C to stop. ' "$1"
+    read -r answer
+}
+printf 'BenX interactive Linux tutorial\n'
+step '1. Identify the kernel with uname -a.' || exit
+uname -a
+step '2. Create a directory, write a file, then read it.' || exit
+work=$(mktemp -d /tmp/benx-tutorial.XXXXXX) || exit 1
+echo "The emulator wrote this file." > "$work/hello.txt"
+ls -l "$work"
+cat "$work/hello.txt"
+step '3. Run a shell script and inspect real system resources.' || exit
+sh "$HOME/examples/status.sh"
+printf '\nTry vi %s/hello.txt to edit your file.\n' "$work"

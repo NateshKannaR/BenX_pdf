@@ -1,0 +1,6 @@
+.git
+.cache
+build
+out
+site-build
+test-results

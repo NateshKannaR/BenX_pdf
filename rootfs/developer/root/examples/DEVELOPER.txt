@@ -1,0 +1,12 @@
+rv32 development examples
+
+  lua ~/examples/hello.lua
+  luac -o /tmp/hello.luac ~/examples/hello.lua
+  lua /tmp/hello.luac
+  c4 ~/examples/hello.c
+  c4 -s ~/examples/hello.c
+
+Lua executes in guest Linux. The Lua compiler emits Lua bytecode.
+c4 runs a small C subset on its own bytecode VM. It does not emit ELF files.
+Use vi to edit the examples. For POSIX programs and native ELF output, use
+a host RISC-V cross toolchain and rebuild the image with your application.
