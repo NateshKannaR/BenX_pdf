@@ -26,7 +26,9 @@ const locations = { field: [710, 752], run: [1520, 748], boot: [1335, 635],
 
 async function ocr(page, clip) {
   const png = await page.screenshot({ clip, timeout: 20000 });
-  const child = execFile('tesseract', ['stdin', 'stdout', '--psm', '6']);
+  const child = execFile('tesseract', ['stdin', 'stdout', '--psm', '6'], {
+    env: { ...process.env, OMP_THREAD_LIMIT: '1' },
+  });
   const result = new Promise((resolve, reject) => {
     const stdout = [];
     child.stdout.on('data', data => stdout.push(data));
@@ -103,6 +105,7 @@ async function main() {
     measurements.shellMs = Math.round(performance.now() - opened);
     measurements.bootRateSamplesKips = rates;
     measurements.validations.push('Executable PDF opened in Chromium and booted to a BusyBox prompt offline');
+    console.log(`${edition} shell visible after ${measurements.shellMs} ms`);
     await waitText(page, /\d+\s*\/\s*\d+\s*MiB/i, regions.ram);
     measurements.validations.push('Guest memory telemetry rendered');
 
@@ -155,6 +158,7 @@ async function main() {
       await waitText(page, /Guest memory/);
       await page.screenshot({ path: path.join(report, 'Lite-console.png'), clip: regions.document });
 
+      console.log('Lite guest commands, filesystem writes and vi passed');
       await page.mouse.click(...locations.reset);
       await waitText(page, /IDLE/, regions.state);
       await page.mouse.click(...locations.boot);

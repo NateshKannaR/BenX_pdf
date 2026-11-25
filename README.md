@@ -4,7 +4,7 @@
 
 BenX_pdf boots a real RISC-V Linux guest inside a standalone PDF. The built-in Chromium viewer executes TinyEMU compiled to asm.js. Linux runs a BusyBox shell and writes to a guest disk backed by memory. The PDF contains the emulator, bootloader, kernel, and filesystem.
 
-[Download the PDF editions](https://github.com/NateshKannaR/BenX_pdf/releases) · [Build guide](docs/build.md) · [Architecture](docs/architecture.md) · [Benchmark results](benchmarks/README.md)
+[Download the PDF editions](https://github.com/NateshKannaR/BenX_pdf/tree/artifacts/v1.0.0) · [Build guide](docs/build.md) · [Architecture](docs/architecture.md) · [Benchmark results](benchmarks/README.md) · [Validation](docs/validation.md)
 
 ![BenX Lite running in Chromium with Linux console output, guest memory readings, and the virtual keyboard](web/assets/lite-console.png)
 
@@ -48,7 +48,7 @@ The original LinuxPDF rasterized its framebuffer into ASCII across 200 fields. B
 make test
 ```
 
-Builds use x86-64 Linux. The pinned container requires no privileged mounts, guest `chroot`, or host package installation. See [Docker and Arch Linux instructions](docs/build.md). The workflow uploads PDFs and SHA-256 sidecars to [GitHub Actions](https://github.com/NateshKannaR/BenX_pdf/actions).
+Builds use x86-64 Linux. The pinned container requires no privileged mounts, guest `chroot`, or host package installation. See [Docker and Arch Linux instructions](docs/build.md). In a successful [GitHub Actions build](https://github.com/NateshKannaR/BenX_pdf/actions/workflows/build.yml), download the **BenX-pdf-editions** artifact for all three PDFs and their SHA-256 sidecars.
 
 ## Performance
 
