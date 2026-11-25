@@ -1,66 +1,70 @@
-# LinuxPDF
+# BenX_pdf
 
-This is Linux running inside a PDF file via a RISC-V emulator, which is based on [TinyEMU](https://bellard.org/tinyemu/).
+**The Document That Boots.**
 
-Try it here: [linux.pdf](https://linux.doompdf.dev/linux.pdf)
+BenX_pdf boots a real RISC-V Linux guest inside a standalone PDF. The built-in Chromium viewer executes TinyEMU compiled to asm.js. Linux runs a BusyBox shell and writes to a guest disk backed by memory. The PDF contains the emulator, bootloader, kernel, and filesystem.
 
-https://github.com/user-attachments/assets/7e992dd1-41a5-4d32-87cc-878b395e3d92
+[Download the PDF editions](https://github.com/NateshKannaR/BenX_pdf/releases) · [Build guide](docs/build.md) · [Architecture](docs/architecture.md) · [Benchmark results](benchmarks/README.md)
 
-See also: [DoomPDF](https://github.com/ading2210/doompdf)
+![BenX Lite running in Chromium with Linux console output, guest memory readings, and the virtual keyboard](web/assets/lite-console.png)
 
-## Explanation
+## Run the workstation
 
-This works in a very similar way to my previous [DoomPDF](https://github.com/ading2210/doompdf) project.
+1. Download an edition and open it directly in desktop Chromium’s built-in PDF viewer.
+2. Wait for **RUNNING** and the `benx:~#` prompt. Keep the tab in the foreground during boot.
+3. Type `benx-info` into **COMMAND** and select **Run**. The on-page keyboard sends individual terminal keys for vi, shell history, and Ctrl+C.
+4. Run `benx-tutorial` to practice with files, scripts, and diagnostics. Use **Restart** for a fresh running VM or **Reset** to return to the idle screen.
 
-You might expect PDF files to only be comprised of static documents, but surprisingly, the PDF file format supports Javascript with its own separate standard library. Modern browsers (Chromium, Firefox) implement this as part of their PDF engines. However, the APIs that are available in the browser are much more limited. 
+Closing, restarting, or resetting discards guest writes. Boot restores the original embedded root disk. Saving a copy through the viewer does not save the guest disk. Viewer JavaScript must be enabled.
 
-The full specfication for the JS in PDFs was only ever implemented by Adobe Acrobat, and it contains some ridiculous things like the ability to do [3D rendering](https://opensource.adobe.com/dc-acrobat-sdk-docs/library/jsapiref/JS_API_AcroJS.html#annot3d), make [HTTP requests](https://opensource.adobe.com/dc-acrobat-sdk-docs/library/jsapiref/JS_API_AcroJS.html#net-http), and [detect every monitor connected to the user's system](https://opensource.adobe.com/dc-acrobat-sdk-docs/library/jsapiref/JS_API_AcroJS.html#monitor). However, on Chromium and other browsers, only a tiny subset of this API was ever implemented, due to obvious security concerns. With this, we can do whatever computation we want, just with some very limited IO.
+| Edition | Architecture | Guest RAM | Tools |
+| --- | --- | ---: | --- |
+| Lite | RV32 | 48 MiB | BusyBox, vi, shell, AWK, filesystem utilities and tutorial |
+| Developer | RV32 | 64 MiB | Lite tools plus Lua 5.4.8, Lua bytecode compilation, c4 and C/Lua examples |
+| Advanced | RV64 | 96 MiB | 64-bit Buildroot guest, BusyBox and a system-monitoring script |
 
-C code can be compiled to run within a PDF using an old version of Emscripten that targets [asm.js](https://en.wikipedia.org/wiki/Asm.js) instead of WebAssembly. With this, I can compile a modified version of the TinyEMU RISC-V emulator to asm.js, which can be run within the PDF. For the input and output, I reused the same display code that I used for DoomPDF. It works by using a separate text field for each row of pixels in the screen, whose contents are set to various ASCII characters. For inputs, there is a virtual keyboard implemented with a bunch of buttons, and a text box you can type in to send keystrokes to the VM.
+Chromium 156 was used for automated browser tests. Desktop Chrome and Edge are candidates because they ship Chromium’s native PDF viewer, but this project has no separate test result for either product. Firefox PDF.js, macOS Preview, Acrobat, mobile viewers, and managed browsers that disable PDF JavaScript are unsupported. Workstation output uses a monochrome ASCII VT100 subset.
 
-The largest problem here is with the emulator's performance. For example, the Linux kernel takes about 30-60 seconds to boot up within the PDF, which over 100x slower than normal. Unfortunately, there's no way to fix this, since the version of V8 that Chrome's PDF engine uses has its [JIT compiler disabled](https://source.chromium.org/chromium/_/pdfium/pdfium/+/012fe571c9fe430da68dbcd2f5ba21758db0ae15:fpdfsdk/fpdf_view.cpp;l=1211-1214;drc=b69783fd189976dd4625c7dcd9c07921b94d4a3c;bpv=0;bpt=0), destroying its performance.
+## How Linux runs
 
-For the root filesystem, there are both 64 and 32 bit versions possible. The default is a 32 bit buildroot system (which was prebuilt and taken from the original TinyEMU examples), and also a 64 bit Alpine Linux system. The 64 bit emulator is about twice as slow however, so it's normally not used. 
-
-## Build Instructions
-
-Clone this repository and run the following commands:
+```mermaid
+flowchart LR
+    PDF["PDF AcroForm"] <-->|"widgets and key actions"| JS["PDF JavaScript"]
+    JS <-->|"input bytes and output rows"| VIO["TinyEMU VirtIO console"]
+    JS -->|"bounded instruction slices"| CPU["TinyEMU RISC-V CPU and RAM"]
+    CPU -->|"BBL boots Linux"| Linux["Linux and BusyBox"]
+    Linux <--> VIO
+    Linux <-->|"VirtIO block"| Disk["Writable in-memory root disk"]
 ```
-python3 -m venv .venv
-source .venv/bin/activate
-pip3 install -r requirements.txt
-./build.sh
+
+The original LinuxPDF rasterized its framebuffer into ASCII across 200 fields. BenX reads the Linux serial console directly and compares each of its 24 rows before updating the viewer. The runtime implements a compact VT100 subset, a queued console input path, and bounded CPU slices. The memory and uptime fields use actual data sampled from the guest’s `/proc`. See [architecture notes](docs/architecture.md).
+
+## Build and test
+
+```bash
+./build.sh lite
+./build.sh developer
+./build.sh advanced
+make test
 ```
-If you want to build the 64 bit rather than 32 bit version, edit `build.sh` and change the `BITS="32"` line.
 
-The `build.sh` script will download Emscripten `1.39.20` automatically. You must be on Linux to build this. 
+Builds use x86-64 Linux. The pinned container requires no privileged mounts, guest `chroot`, or host package installation. See [Docker and Arch Linux instructions](docs/build.md). The workflow uploads PDFs and SHA-256 sidecars to [GitHub Actions](https://github.com/NateshKannaR/BenX_pdf/actions).
 
-The generated files will be in the `out/` directory. Then you can run `(cd out; python3 -m http.server)` to serve the files on a web server.
+## Performance
 
-## Credits
+The comparison used the original LinuxPDF RV32 code and Chromium 156 on one AMD EPYC cloud instance.
 
-This project was made by [@ading2210](https://github.com/ading2210/).
+| Metric | LinuxPDF RV32 | BenX Lite |
+| --- | ---: | ---: |
+| PDF file size | 6,284,428 bytes | 3,830,292 bytes |
+| Time to shell | 58.3 s | 40.5 s |
+| Median displayed throughput during boot | 1,051 kIPS | 1,650 kIPS |
+| Median virtual Enter to visible change | 459 ms | 486 ms |
 
-The RISC-V emulator is forked from [TinyEMU](https://bellard.org/tinyemu/), which was written by [Fabrice Bellard](https://bellard.org/).
+The throughput counters use different accounting. Rendering and input latency were variable, and this run does not show a latency improvement. [Methods and raw samples](benchmarks/README.md)
 
-## License
+## Limits and licensing
 
-This repository is licensed under the GNU GPL v3.
+The guest’s historical Linux kernel and userspace are for an offline demonstration. The virtual hardware exposes a console and disk. There is no NIC, guest-to-host file sharing, browser DOM integration, package installation from the internet, or persistence. Developer’s c4 emits code for its own bytecode VM. Native ELF builds need a separate RISC-V toolchain.
 
-```
-ading2210/linuxpdf - Linux running inside a PDF file
-Copyright (C) 2025 ading2210
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
-```
+BenX code is GPL-3.0-or-later. LinuxPDF is by ading2210. TinyEMU is by Fabrice Bellard and carries its MIT notice. Guest and third-party components keep their respective licenses. [Credits and source references](CREDITS.md)

@@ -1,37 +1,128 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>LinuxPDF</title>
-
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="LinuxPDF">
-    <meta name="description" content="Linux running inside a PDF file via a RISC-V emulator.">
-    <meta name="og:description" content="Linux running inside a PDF file via a RISC-V emulator.">
-
-    <link rel="stylesheet" href="/index.css">
-    <script src="/index.js" defer></script>
-  </head>
-  <body>
-    <div class="spacer"></div>
-    <div id="article">
-      <div id="header_box">
-        <img src="/favicon_128.png" width="48px" height="48px">
-        <h1>LinuxPDF</h1>
-      </div>
-
-      <p>This is Linux running inside a PDF file via a RISC-V emulator, which is based on <a href="https://bellard.org/tinyemu/">TinyEMU</a>.</p>
-      <p>Source code: <a href="https://github.com/ading2210/linuxpdf">https://github.com/ading2210/linuxpdf</a></p>
-
-      <hr><br>
-
-      <div id="controls_box">
-        <a href="/linux.pdf" id="play_button">Start Emulator</a>
-      </div>
-      <br>
-      <p style="font-size: 12px; margin-top: 4px; margin-bottom: 4px;">Note: the PDF only works inside Chromium-based browsers.</p>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101419">
+  <meta name="description" content="BenX_pdf boots a real RISC-V Linux workstation inside a standalone PDF.">
+  <title>BenX_pdf — The Document That Boots.</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="frame bar">
+      <a class="brand" href="./"><span aria-hidden="true"></span>BenX_pdf</a>
+      <nav aria-label="Sections">
+        <a href="#editions">Editions</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#benchmarks">Benchmarks</a>
+        <a href="#build">Build</a>
+      </nav>
+      <a class="source" href="https://github.com/NateshKannaR/BenX_pdf">GitHub</a>
     </div>
-    <div class="spacer"></div>
-  </body>
+  </header>
+  <main class="frame">
+    <section class="hero" aria-labelledby="title">
+      <div class="hero-copy">
+        <h1 id="title">The Document<br>That Boots<span>.</span></h1>
+        <p>A real Linux workstation in one PDF. Open it in desktop Chromium, wait for the BusyBox prompt, and start working inside an emulated RISC-V machine.</p>
+        <div class="actions">
+          <a class="button primary" href="downloads/BenX_Lite.pdf" download>Download Lite</a>
+          <a class="button secondary" href="#editions">Compare editions</a>
+        </div>
+        <p class="note">Offline runtime · No installation · Session data clears on close</p>
+      </div>
+      <figure class="hero-screen">
+        <a href="assets/lite-console.png">
+          <img src="assets/lite-console.png" alt="BenX Lite PDF showing a running Linux guest with the terminal, real memory readings, and virtual keyboard." width="1276" height="982">
+        </a>
+        <figcaption>BenX Lite running in Chromium’s built-in PDF viewer</figcaption>
+      </figure>
+    </section>
+
+    <section id="editions" aria-labelledby="editions-title">
+      <div class="section-heading">
+        <h2 id="editions-title">Choose an edition</h2>
+        <p>Each download contains its own emulator, firmware, Linux kernel, and writable root disk.</p>
+      </div>
+      <div class="editions">
+        <article>
+          <p class="spec">RV32 · 48 MiB guest RAM</p>
+          <h3>Lite</h3>
+          <p>BusyBox shell, vi, shell scripting, AWK, system tools, and a hands-on Linux tutorial.</p>
+          <a class="button secondary" href="downloads/BenX_Lite.pdf" download>Download Lite PDF</a>
+        </article>
+        <article>
+          <p class="spec">RV32 · 64 MiB guest RAM</p>
+          <h3>Developer</h3>
+          <p>Adds Lua 5.4, its bytecode compiler, and c4 for compiling and running a small C subset.</p>
+          <a class="button secondary" href="downloads/BenX_Developer.pdf" download>Download Developer PDF</a>
+        </article>
+        <article>
+          <p class="spec">RV64 · 96 MiB guest RAM</p>
+          <h3>Advanced</h3>
+          <p>A 64-bit Linux guest with more RAM and a script to inspect CPU, memory, mounts, and load.</p>
+          <a class="button secondary" href="downloads/BenX_Advanced.pdf" download>Download Advanced PDF</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="architecture" aria-labelledby="architecture-title">
+      <div class="section-heading">
+        <h2 id="architecture-title">Inside the PDF</h2>
+        <p>Linux runs in the browser’s PDF JavaScript sandbox. The browser sees one page and its form fields. The guest sees a RISC-V processor, RAM, a console, and a block device.</p>
+      </div>
+      <ol class="architecture">
+        <li><strong>PDF AcroForms</strong><span>Input actions and terminal rows</span></li>
+        <li><strong>PDF JavaScript</strong><span>Timer, input queue, ANSI parsing</span></li>
+        <li><strong>TinyEMU asm.js</strong><span>CPU, memory, and VirtIO</span></li>
+        <li><strong>Guest Linux</strong><span>Firmware, kernel, and BusyBox</span></li>
+      </ol>
+      <p class="detail">The command box sends bytes to <code>/dev/hvc0</code>. The guest shell executes the command and writes back to the same console. The viewer updates rows whose text changed.</p>
+      <a class="text-link" href="https://github.com/NateshKannaR/BenX_pdf/blob/main/docs/architecture.md">Read the architecture notes</a>
+    </section>
+
+    <section id="benchmarks" aria-labelledby="benchmarks-title">
+      <div class="section-heading">
+        <h2 id="benchmarks-title">Measured performance</h2>
+        <p>Chromium’s built-in viewer interprets the asm.js CPU. Guest boot and command latency depend on the host and whether the tab is in the foreground.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th scope="col">Metric</th><th scope="col">LinuxPDF RV32</th><th scope="col">BenX Lite</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">PDF size</th><td>6.28 MB</td><td>3.83 MB</td></tr>
+            <tr><th scope="row">Time to shell</th><td>58.3 s</td><td>40.5 s</td></tr>
+            <tr><th scope="row">Median displayed boot throughput</th><td>1,051 kIPS</td><td>1,650 kIPS</td></tr>
+            <tr><th scope="row">Median Enter to visible change</th><td>459 ms</td><td>486 ms</td></tr>
+            <tr><th scope="row">Visible changes during scroll sampling</th><td>3 of 13 samples</td><td>1 of 21 samples</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <a class="text-link" href="https://github.com/NateshKannaR/BenX_pdf/blob/main/benchmarks/README.md">See the methodology and raw results</a>
+    </section>
+
+    <section id="build" class="build-section" aria-labelledby="build-title">
+      <div>
+        <h2 id="build-title">Open or build it</h2>
+        <p>Download a PDF, open it in a desktop Chromium browser’s built-in viewer, and wait for <code>RUNNING</code>. Try <code>benx-info</code> or <code>benx-tutorial</code>.</p>
+        <p>Firefox PDF.js, macOS Preview, Acrobat, and mobile viewers are outside the supported runtime. JavaScript must be enabled by the viewer.</p>
+        <a class="text-link" href="https://github.com/NateshKannaR/BenX_pdf/blob/main/docs/build.md">Read the Linux and Docker build guide</a>
+      </div>
+      <pre><code>git clone https://github.com/NateshKannaR/BenX_pdf.git
+cd BenX_pdf
+./build.sh lite
+
+# Output
+out/BenX_Lite.pdf</code></pre>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="frame bar">
+      <a class="brand" href="./"><span aria-hidden="true"></span>BenX_pdf</a>
+      <p>Built on LinuxPDF by ading2210 and TinyEMU by Fabrice Bellard.</p>
+      <a class="source" href="https://github.com/NateshKannaR/BenX_pdf/blob/main/CREDITS.md">Credits and licenses</a>
+    </div>
+  </footer>
+</body>
 </html>

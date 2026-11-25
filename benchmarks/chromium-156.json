@@ -1,0 +1,105 @@
+{
+  "browser": "156.0.8078.79",
+  "measurements": [
+    {
+      "name": "LinuxPDF RV32",
+      "bytes": 6284428,
+      "sha256": "0f0e2d62adb1a100a2f5d3e63f34f5f455d72c90d876ad976cb33fc50d88821d",
+      "ratesKips": [
+        1896,
+        1297,
+        1685,
+        1323,
+        1404,
+        1144,
+        1139,
+        1338,
+        1170,
+        928,
+        1244,
+        1223,
+        1161,
+        1201,
+        1126,
+        1029,
+        958,
+        891,
+        755,
+        695,
+        976,
+        931,
+        992,
+        1019,
+        1043,
+        944,
+        899,
+        974,
+        1005,
+        1110,
+        1058,
+        1032,
+        1033,
+        1065
+      ],
+      "enterToPaintMs": [
+        565,
+        251,
+        352,
+        751
+      ],
+      "shellMs": 58316,
+      "medianBootKips": 1050.5,
+      "medianEnterToPaintMs": 458.5,
+      "scrollDisplay": {
+        "changedSamples": 3,
+        "samples": 13,
+        "durationMs": 2527
+      }
+    },
+    {
+      "name": "BenX Lite",
+      "bytes": 3830292,
+      "sha256": "68124d40cce4fb7cdf3f291d8c1b13dbe60a6c73e4c5442a980b1bdb6fd4920d",
+      "ratesKips": [
+        2627,
+        1620,
+        1732,
+        1831,
+        1565,
+        1729,
+        1803,
+        1776,
+        1814,
+        1818,
+        1713,
+        1685,
+        1650,
+        1659,
+        1459,
+        454,
+        1320,
+        1165,
+        829,
+        1197,
+        1086,
+        1139,
+        1184
+      ],
+      "enterToPaintMs": [
+        486,
+        667,
+        403,
+        473,
+        515
+      ],
+      "shellMs": 40459,
+      "medianBootKips": 1650,
+      "medianEnterToPaintMs": 486,
+      "scrollDisplay": {
+        "changedSamples": 1,
+        "samples": 21,
+        "durationMs": 2575
+      }
+    }
+  ]
+}

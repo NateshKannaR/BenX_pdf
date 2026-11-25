@@ -13,3 +13,4 @@ riscvemu64*.js
 /test-results/
 __pycache__/
 /site-build/
+/node_modules/

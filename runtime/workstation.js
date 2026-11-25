@@ -21,7 +21,6 @@ var lastPaint = 0;
 var slice = 18000;
 var inputBuffer = "";
 var modifiers = { Shift: false, Ctrl: false, Alt: false, Caps: false };
-var lastSubmit = "";
 
 function benxSet(name, value) {
   if (values[name] === value) return;
@@ -169,7 +168,6 @@ function benxReset() {
   if (diskPtr) Module._free(diskPtr);
   diskPtr = 0;
   inputBuffer = "";
-  lastSubmit = "";
   for (const key of Object.keys(modifiers)) modifiers[key] = false;
   terminal = new BenxTerminal(80, 24, benxTelemetry);
   benxPaint();
@@ -177,7 +175,7 @@ function benxReset() {
   benxSet("rate", "-");
   benxSet("memory", "-");
   benxSet("uptime", "-");
-  benxSet("command", "");
+  benxDoc.getField("command").value = "";
   benxState("idle");
   benxNotice("Select Boot to start a fresh Linux guest");
 }
@@ -188,28 +186,22 @@ function benxRestart() {
 function benxSend(text) {
   if (phase !== "running" && phase !== "booting") {
     benxNotice("Boot Linux before sending input");
-    return;
+    return false;
   }
   if (inputBuffer.length + text.length > 4096) {
     benxNotice("Input queue full. Try again after it drains");
-    return;
+    return false;
   }
   inputBuffer += text;
+  return true;
 }
 function benxRun(text) {
-  if (!text || text === lastSubmit) return;
+  if (!text) return;
   if (/[^\x20-\x7e]/.test(text)) {
     benxNotice("Use printable ASCII in the command field");
     return;
   }
-  benxSend(text + "\r");
-  lastSubmit = text;
-  app.setTimeOut("benxClearCommand()", 1);
-}
-function benxClearCommand() {
-  const field = benxDoc.getField("command");
-  if (field.value === lastSubmit) field.value = "";
-  lastSubmit = "";
+  if (benxSend(text + "\r")) benxDoc.getField("command").value = "";
 }
 const specialKeys = {
   Esc: "\x1b", Tab: "\t", Enter: "\r", Backspace: "\x7f", Space: " ",
