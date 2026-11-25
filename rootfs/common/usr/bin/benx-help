@@ -13,7 +13,7 @@ BenX workstation
   ls ~/examples   Find guest examples
 
 Virtual keyboard sends input straight to Linux.
-The command field sends one line with Enter or Run.
+Type or paste one line in the command field, then select Run.
 Restart boots a fresh guest. Reset returns to the boot screen.
 HELP
 case "$(cat /etc/benx-edition)" in

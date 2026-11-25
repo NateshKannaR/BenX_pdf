@@ -211,13 +211,6 @@ function benxClearCommand() {
   if (field.value === lastSubmit) field.value = "";
   lastSubmit = "";
 }
-function benxCommandEvent(event) {
-  if (!event.willCommit && /[\r\n]/.test(event.change)) {
-    event.rc = false;
-    benxRun(event.value.slice(0, event.selStart) + event.change.trimEnd() +
-            event.value.slice(event.selEnd));
-  }
-}
 const specialKeys = {
   Esc: "\x1b", Tab: "\t", Enter: "\r", Backspace: "\x7f", Space: " ",
   Up: "\x1b[A", Down: "\x1b[B", Right: "\x1b[C", Left: "\x1b[D",

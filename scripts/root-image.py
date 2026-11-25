@@ -27,6 +27,7 @@ def main():
         if args.tools:
             for name in ("lua", "luac", "c4"):
                 shutil.copy2(args.tools / name, overlay / "usr/bin" / name)
+        (overlay / "etc").mkdir(exist_ok=True)
         for name in ("edition", "version"):
             (overlay / "etc" / f"benx-{name}").write_text(getattr(args, name) + "\n")
 

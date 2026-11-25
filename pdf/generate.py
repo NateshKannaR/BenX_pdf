@@ -166,11 +166,9 @@ class WorkstationPage:
 
         self.panel(24, 199, 908, 47)
         self.label(36, 226, 9, "COMMAND", MUTED, "MonoBold")
-        self.label(130, 228, 8.5, "Enter or Run sends the line to Linux", MUTED)
+        self.label(130, 228, 8.5, "Type or paste a command, then select Run", MUTED)
         field = self.field("command", 128, 209, 726, 16, size=11, fill=TERMINAL, editable=True)
-        field.Ff = 4096  # Multiline makes Return a keystroke rather than a viewer commit.
         field.MaxLen = 512
-        field.AA = PdfDict(K=action("benxCommandEvent(event)"))
         self.button("run", "Run", 862, 207, 57, 25, 'benxRun(String(benxDoc.getField("command").value))', True)
 
         self.panel(24, 48, 908, 145)

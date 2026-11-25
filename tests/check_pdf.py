@@ -13,7 +13,7 @@ page = document.pages[0]
 fields = {field.T.to_unicode(): field for field in document.Root.AcroForm.Fields}
 assert len([name for name in fields if name.startswith("row_")]) == 24
 assert len([name for name in fields if name.startswith("key_")]) >= 65
-assert fields["command"].AA.K.S == PdfName.JavaScript
+assert fields["command"].FT == PdfName.Tx and int(fields["command"].Ff) == 0
 for name in ("boot", "restart", "reset", "run"):
     assert fields[name].AA.U.S == PdfName.JavaScript
 assert document.Root.Names is None and document.Root.OpenAction is None
